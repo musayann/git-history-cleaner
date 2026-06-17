@@ -10,7 +10,7 @@
 #   ./restore-branch.sh <owner/repo> <branch> <good-sha> [-y|--yes]
 #
 # Example:
-#   ./restore-branch.sh Brainix-Devs/lesson-service dev a92ebcc49df32b373a31c035b2538a2fed3604b1
+#   ./restore-branch.sh acme-corp/widget-service dev 1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b
 #
 # Options:
 #   -y, --yes    Skip the confirmation prompt (use with care)
@@ -23,7 +23,7 @@ usage() {
 Usage: restore-branch.sh <owner/repo> <branch> <good-sha> [-y|--yes]
 
 Arguments:
-  owner/repo   Repository in OWNER/REPO form (e.g. Brainix-Devs/lesson-service)
+  owner/repo   Repository in OWNER/REPO form (e.g. acme-corp/widget-service)
   branch       Branch to restore (e.g. dev)
   good-sha     The commit SHA to reset the branch to (the known-good state)
 

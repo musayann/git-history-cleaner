@@ -16,8 +16,8 @@
 #   ./detect-force-push.sh <owner/repo> [branch]
 #
 # Examples:
-#   ./detect-force-push.sh Brainix-Devs/brainixcms-service
-#   ./detect-force-push.sh Brainix-Devs/brainixcms-service dev
+#   ./detect-force-push.sh acme-corp/widget-service
+#   ./detect-force-push.sh acme-corp/widget-service dev
 #
 # Note: the Events API only covers roughly the last 90 days and up to 300 events,
 # so this sees recent activity only. For older history use the org audit log.

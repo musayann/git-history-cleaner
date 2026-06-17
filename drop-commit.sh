@@ -23,7 +23,7 @@
 #   ./drop-commit.sh <owner/repo> <branch> <bad-sha> [-y|--yes]
 #
 # Example:
-#   ./drop-commit.sh Brainix-Devs/lesson-service dev a92ebcc49df32b373a31c035b2538a2fed3604b1
+#   ./drop-commit.sh acme-corp/widget-service dev 1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b
 #
 # Options:
 #   -y, --yes    Skip the confirmation prompt (use with care)
@@ -36,7 +36,7 @@ usage() {
 Usage: drop-commit.sh <owner/repo> <branch> <bad-sha> [-y|--yes]
 
 Arguments:
-  owner/repo   Repository in OWNER/REPO form (e.g. Brainix-Devs/lesson-service)
+  owner/repo   Repository in OWNER/REPO form (e.g. acme-corp/widget-service)
   branch       Branch to rewrite (e.g. dev)
   bad-sha      The commit to remove from history (full or abbreviated SHA)
 
@@ -130,10 +130,13 @@ CURRENT_SHA="$(git rev-parse "$REF")"
 BAD_SUBJECT="$(git log -1 --format='%s' "$BAD_FULL")"
 
 # Commits to replay, oldest-first: everything on the branch after the bad commit.
-mapfile -t REPLAY < <(git rev-list --reverse --topo-order "${BAD_FULL}..${REF}")
+# (read loop instead of mapfile: macOS ships bash 3.2, which has no mapfile.)
+REPLAY=()
+while IFS= read -r _line; do REPLAY+=("$_line"); done \
+  < <(git rev-list --reverse --topo-order "${BAD_FULL}..${REF}")
 
 # Refuse merge commits inside the replay range (merge-tree replay is non-trivial).
-for c in "${REPLAY[@]}"; do
+for c in ${REPLAY[@]+"${REPLAY[@]}"}; do
   pc="$(git rev-list --no-walk --parents "$c" | wc -w)"
   if [ "$pc" -gt 2 ]; then
     echo "Error: ${c} (on top of the bad commit) is a merge commit; refusing." >&2
@@ -167,7 +170,7 @@ fi
 
 # --- replay each good commit onto the new base, entirely in the object DB ---
 NEWBASE="$PARENT"
-for c in "${REPLAY[@]}"; do
+for c in ${REPLAY[@]+"${REPLAY[@]}"}; do
   cparent="$(git rev-parse "${c}^")"
 
   # Three-way merge in the object store: base=parent(c), ours=NEWBASE, theirs=c.
